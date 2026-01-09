@@ -91,3 +91,6 @@ async def smart_drip_import(
                 failed.append({"email": email, "status": resp.status_code, "body": resp.text[:500]})
 
     return {"ok": True, "created_contacts": created, "failed": failed}
+@app.get("/")
+def root():
+    return {"ok": True, "service": "smart-drip"}
