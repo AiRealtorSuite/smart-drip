@@ -94,3 +94,20 @@ async def smart_drip_import(
 @app.get("/")
 def root():
     return {"ok": True, "service": "smart-drip"}
+import traceback
+from fastapi.responses import JSONResponse
+from starlette.middleware.base import BaseHTTPMiddleware
+
+class CatchAllExceptionsMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        try:
+            return await call_next(request)
+        except Exception as e:
+            print("UNHANDLED_EXCEPTION:", repr(e))
+            print(traceback.format_exc())
+            return JSONResponse(
+                status_code=500,
+                content={"ok": False, "error": "Internal Server Error (see server logs)"},
+            )
+
+app.add_middleware(CatchAllExceptionsMiddleware)
